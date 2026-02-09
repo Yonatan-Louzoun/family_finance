@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ניהול פיננסי - משפחת לוזון</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <h1>ניהול פיננסי - משפחת לוזון</h1>
+    <div style="font-size: 0.9rem; margin-top: 5px;">מעקב הוצאות | חלוקת חיסכון חכמה</div>
+</header>
+
+<div class="container">
+    
+    <div class="tabs">
+        <button id="tab-budget" class="tab-btn active" onclick="switchTab('budget')">ניהול תקציב שוטף</button>
+        <button id="tab-savings" class="tab-btn" onclick="switchTab('savings')">חלוקת חיסכון (5 בחודש)</button>
+    </div>
+
+    <div id="budget" class="section active">
+        
+        <div class="card">
+            <h2>הוספת הוצאה חדשה</h2>
+            <div class="form-group">
+                <label>קטגוריה</label>
+                <select id="expenseCategory"></select>
+            </div>
+            <div class="form-group">
+                <label>סכום (בש"ח)</label>
+                <input type="number" id="expenseAmount" placeholder="לדוגמה: 150">
+            </div>
+            <div class="form-group">
+                <label>תיאור (אופציונלי)</label>
+                <input type="text" id="expenseDesc" placeholder="לדוגמה: קנייה ברמי לוי">
+            </div>
+            <button class="action-btn" onclick="addExpense()">הוסף הוצאה</button>
+        </div>
+
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h2>מצב התקציב החודשי</h2>
+                <button onclick="resetMonth()" class="reset-btn">איפוס חודש חדש</button>
+            </div>
+            <div id="budgetList"></div>
+        </div>
+
+        <div class="card">
+            <h2>ניהול קטגוריות</h2>
+            <div style="display:flex; gap:10px;">
+                <input type="text" id="newCatName" placeholder="שם קטגוריה חדשה">
+                <input type="number" id="newCatBudget" placeholder="תקציב" style="width:100px;">
+                <button class="action-btn" style="width:auto;" onclick="addCategory()">+</button>
+            </div>
+            <div id="categoriesList" style="margin-top:1rem;"></div>
+        </div>
+    </div>
+
+    <div id="savings" class="section">
+        <div class="card">
+            <h2>מחשבון הפקדות חודשי</h2>
+            <p>הכניסו את הסכום הפנוי לחיסכון החודש, והמערכת תחלק אותו לפי האחוזים שהוגדרו.</p>
+            
+            <div class="form-group">
+                <label>סכום כולל לחיסכון (בש"ח):</label>
+                <input type="number" id="totalSavingsInput" placeholder="לדוגמה: 4103">
+            </div>
+            <button class="action-btn" onclick="calculateSavings()">בצע חלוקה</button>
+        </div>
+
+        <div class="card" id="savingsResult" style="display:none;">
+            <h3>תוצאות החלוקה להפקדה:</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>מטרה</th>
+                        <th>קרן / מספר</th>
+                        <th>סכום להפקדה</th>
+                    </tr>
+                </thead>
+                <tbody id="savingsTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
