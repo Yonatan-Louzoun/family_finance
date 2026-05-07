@@ -2,7 +2,6 @@
     --primary: #2c3e50;
     --accent: #3498db;
     --success: #27ae60;
-    --warning: #f1c40f;
     --danger: #e74c3c;
     --light: #ecf0f1;
     --white: #ffffff;
@@ -12,9 +11,7 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f4f7f6;
-    margin: 0;
-    padding: 0;
-    color: #333;
+    margin: 0; padding: 0; color: #333;
 }
 
 header {
@@ -25,144 +22,65 @@ header {
     box-shadow: var(--shadow);
 }
 
-h1 { margin: 0; font-size: 1.5rem; }
-h2 { font-size: 1.2rem; color: var(--primary); border-bottom: 2px solid var(--accent); padding-bottom: 0.5rem; margin-top: 1.5rem;}
+.container { max-width: 850px; margin: 0 auto; padding: 1rem; }
 
-.container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 1rem;
-}
-
-/* Navigation Tabs */
 .tabs {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 1rem;
-    background: var(--white);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: var(--shadow);
+    display: flex; background: var(--white);
+    border-radius: 8px; overflow: hidden;
+    margin-bottom: 1rem; box-shadow: var(--shadow);
 }
 
 .tab-btn {
-    flex: 1;
-    padding: 1rem;
-    border: none;
-    background: none;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: bold;
-    transition: background 0.3s;
+    flex: 1; padding: 1rem; border: none; background: none;
+    cursor: pointer; font-size: 1rem; font-weight: bold;
 }
 
-.tab-btn.active {
-    background-color: var(--accent);
-    color: var(--white);
-}
+.tab-btn.active { background-color: var(--accent); color: var(--white); }
 
 .section { display: none; }
 .section.active { display: block; }
 
-/* Cards & Forms */
 .card {
-    background: var(--white);
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-    box-shadow: var(--shadow);
+    background: var(--white); border-radius: 8px;
+    padding: 1.5rem; margin-bottom: 1rem; box-shadow: var(--shadow);
 }
 
 .form-group { margin-bottom: 1rem; }
 label { display: block; margin-bottom: 0.5rem; font-weight: bold; }
 
 input, select {
-    width: 100%;
-    padding: 0.8rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box;
-    font-size: 1rem;
+    width: 100%; padding: 0.8rem; border: 1px solid #ddd;
+    border-radius: 4px; box-sizing: border-box;
 }
+
+.inline-form { display: flex; gap: 8px; margin-bottom: 1rem; }
+.inline-form input { flex: 2; }
+.inline-form input[type="number"] { flex: 1; }
 
 button.action-btn {
-    width: 100%;
-    padding: 0.8rem;
-    background-color: var(--accent);
-    color: var(--white);
-    border: none;
-    border-radius: 4px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background 0.2s;
+    padding: 0.8rem 1.2rem; background-color: var(--accent);
+    color: var(--white); border: none; border-radius: 4px;
+    cursor: pointer; font-size: 1rem;
 }
 
-button.action-btn:hover { background-color: #2980b9; }
-
-button.delete-btn {
-    background-color: var(--danger);
-    padding: 0.3rem 0.6rem;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.8rem;
+.management-list { margin-top: 1rem; border-top: 1px solid #eee; }
+.list-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0; border-bottom: 1px solid #eee;
 }
 
-.reset-btn {
-    background: none;
-    border: none;
-    color: var(--danger);
-    cursor: pointer;
-    text-decoration: underline;
+.delete-btn {
+    background-color: var(--danger); color: white;
+    border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer;
 }
 
-/* Budget List */
-.budget-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.8rem 0;
-    border-bottom: 1px solid #eee;
-}
+.reset-btn { background: none; border: none; color: var(--danger); text-decoration: underline; cursor: pointer; }
 
-.budget-val-box {
-    margin-bottom: 1.2rem;
-}
+.progress-bar-bg { background-color: #eee; border-radius: 10px; height: 10px; width: 100%; margin: 8px 0; overflow: hidden; }
+.progress-bar-fill { height: 100%; background-color: var(--success); transition: width 0.5s; }
 
-.progress-bar-bg {
-    background-color: #eee;
-    border-radius: 10px;
-    height: 10px;
-    width: 100%;
-    margin-top: 5px;
-    overflow: hidden;
-}
-
-.progress-bar-fill {
-    height: 100%;
-    background-color: var(--success);
-    width: 0%;
-    transition: width 0.5s;
-}
-
-/* Savings Table */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-}
-
-th, td {
-    text-align: right;
-    padding: 0.8rem;
-    border-bottom: 1px solid #ddd;
-}
-
+table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+th, td { text-align: right; padding: 12px; border-bottom: 1px solid #ddd; }
 th { background-color: var(--light); }
 
-/* Responsive */
-@media (max-width: 600px) {
-    .budget-item { flex-direction: column; align-items: flex-start; }
-    .budget-vals { width: 100%; display: flex; justify-content: space-between; margin-top: 0.5rem;}
-}
+@media (max-width: 600px) { .inline-form { flex-direction: column; } }
