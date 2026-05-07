@@ -1,188 +1,167 @@
-// --- DATA & STATE ---
-const defaultCategories = [
-    { id: 1, name: 'מזון וסופר (בית)', budget: 2000, spent: 0 },
-    { id: 2, name: 'פארם ותינוק (הלל ישראל)', budget: 600, spent: 0 },
-    { id: 3, name: 'בילויים ומסעדות', budget: 500, spent: 0 },
-    { id: 4, name: 'דלק ותחבורה', budget: 800, spent: 0 },
-    { id: 5, name: 'חשבונות (חשמל/מים/גז)', budget: 700, spent: 0 },
-    { id: 6, name: 'ביגוד והנעלה', budget: 300, spent: 0 }
+// --- נתונים ראשוניים (יועלו רק בשימוש הראשון) ---
+const initialBudget = [
+    { id: 1, name: 'מזון וסופר', budget: 2500, spent: 0 },
+    { id: 2, name: 'פארם ותינוק (הלל ישראל)', budget: 800, spent: 0 },
+    { id: 3, name: 'בילויים', budget: 500, spent: 0 }
 ];
 
-// Percentage Logic based on our conversation
-const savingsRules = [
-    { goal: 'דירה', fund: 'דולפין כספית שקלית (5141098)', percent: 29.25 },
-    { goal: 'רכב', fund: 'אי בי איי כספית חיסכון (5141197)', percent: 24.37 },
-    { goal: 'אירועים (חדווה)', fund: 'אלטשולר שחם כספית (5140918)', percent: 10.48 },
-    { goal: 'ארנונה', fund: 'ילין לפידות כספית כשרה (5141452)', percent: 9.75 },
-    { goal: 'חופשות', fund: "מיטב כספית ג'מבו (5141296)", percent: 9.02 },
-    { goal: 'מעבר דירה', fund: 'פורסט כספית (5141353)', percent: 9.02 },
-    { goal: 'חירום + בלת"מ', fund: 'אנליסט כספית חיסכון (5140413)', percent: 8.11 }
+const initialSavings = [
+    { id: 1, goal: 'דירה', fund: 'מיטב כספית שקלית ללא קונצרני', percent: 32.5 },
+    { id: 2, goal: 'רכב', fund: 'הראל כספית שקלית', percent: 27.1 },
+    { id: 3, goal: 'אירועים (חדוה)', fund: 'אלטשולר שחם כספית (5140918)', percent: 11.6 },
+    { id: 4, goal: 'חופשות', fund: 'אזימוט כספית', percent: 9.9 },
+    { id: 5, goal: 'מעבר דירה', fund: 'פורסט כספית (5141353)', percent: 9.9 },
+    { id: 6, goal: 'חירום', fund: 'מור כספית ניהול נזילות', percent: 9.0 }
 ];
 
-let categories = JSON.parse(localStorage.getItem('louzounCategories')) || defaultCategories;
+let categories = JSON.parse(localStorage.getItem('louzounCategories')) || initialBudget;
+let savingsRules = JSON.parse(localStorage.getItem('louzounSavings')) || initialSavings;
 
-// --- INITIALIZATION ---
+// --- אתחול ---
 function init() {
-    renderCategoriesSelect();
-    renderBudgetList();
-    renderCategoriesManagement();
+    renderBudget();
+    renderSavingsRules();
+    renderCategorySelect();
 }
 
-// --- SAVINGS LOGIC ---
-function calculateSavings() {
-    const total = parseFloat(document.getElementById('totalSavingsInput').value);
-    if (!total || total <= 0) {
-        alert('אנא הכנס סכום תקין');
-        return;
-    }
-
-    const tbody = document.getElementById('savingsTableBody');
-    tbody.innerHTML = '';
-    
-    let checkSum = 0;
-
-    savingsRules.forEach(rule => {
-        // Calculate and round to nearest integer
-        const amount = Math.round(total * (rule.percent / 100));
-        checkSum += amount;
-
-        const row = `
-            <tr>
-                <td><strong>${rule.goal}</strong></td>
-                <td>${rule.fund}</td>
-                <td style="font-size:1.1rem; color:var(--accent);">₪${amount.toLocaleString()}</td>
-            </tr>
-        `;
-        tbody.innerHTML += row;
-    });
-
-    document.getElementById('savingsResult').style.display = 'block';
-}
-
-// --- BUDGET LOGIC ---
-function renderCategoriesSelect() {
+// --- ניהול תקציב (הוצאות) ---
+function renderCategorySelect() {
     const select = document.getElementById('expenseCategory');
-    select.innerHTML = '';
-    categories.forEach(cat => {
-        const option = document.createElement('option');
-        option.value = cat.id;
-        option.textContent = cat.name;
-        select.appendChild(option);
-    });
+    select.innerHTML = categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
 }
 
-function addExpense() {
-    const catId = parseInt(document.getElementById('expenseCategory').value);
-    const amount = parseFloat(document.getElementById('expenseAmount').value);
+function renderBudget() {
+    const list = document.getElementById('budgetList');
+    const mngList = document.getElementById('categoriesList');
     
-    if (!amount || amount <= 0) {
-        alert('אנא הכנס סכום תקין');
-        return;
-    }
+    list.innerHTML = categories.map(cat => {
+        const p = Math.min((cat.spent / cat.budget) * 100, 100);
+        return `
+            <div style="margin-bottom:15px;">
+                <div style="display:flex; justify-content:space-between;">
+                    <strong>${cat.name}</strong>
+                    <span>₪${cat.spent} / ₪${cat.budget}</span>
+                </div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${p}%;"></div></div>
+            </div>`;
+    }).join('');
 
-    const catIndex = categories.findIndex(c => c.id === catId);
-    if (catIndex > -1) {
-        categories[catIndex].spent += amount;
-        saveData();
-        renderBudgetList();
-        
-        // Clear inputs
-        document.getElementById('expenseAmount').value = '';
-        document.getElementById('expenseDesc').value = '';
-        alert('ההוצאה נוספה בהצלחה!');
-    }
+    mngList.innerHTML = categories.map(cat => `
+        <div class="list-item">
+            <span>${cat.name} (₪${cat.budget})</span>
+            <button class="delete-btn" onclick="deleteItem('cat', ${cat.id})">מחק</button>
+        </div>`).join('');
 }
 
-function renderBudgetList() {
-    const container = document.getElementById('budgetList');
-    container.innerHTML = '';
-
-    categories.forEach(cat => {
-        const percent = Math.min((cat.spent / cat.budget) * 100, 100);
-        const isOver = cat.spent > cat.budget;
-        const barColor = isOver ? 'var(--danger)' : 'var(--success)';
-        
-        const item = document.createElement('div');
-        item.className = 'budget-val-box';
-        item.innerHTML = `
-            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                <strong>${cat.name}</strong>
-                <span>₪${cat.spent.toLocaleString()} / ₪${cat.budget.toLocaleString()}</span>
-            </div>
-            <div class="progress-bar-bg">
-                <div class="progress-bar-fill" style="width:${percent}%; background-color:${barColor}"></div>
-            </div>
-            ${isOver ? `<small style="color:red">חריגה של ₪${(cat.spent - cat.budget).toLocaleString()}</small>` : ''}
-        `;
-        container.appendChild(item);
-    });
-}
-
-// --- CATEGORY MANAGEMENT ---
 function addCategory() {
     const name = document.getElementById('newCatName').value;
     const budget = parseFloat(document.getElementById('newCatBudget').value);
-
     if (name && budget) {
-        const newId = categories.length > 0 ? Math.max(...categories.map(c => c.id)) + 1 : 1;
-        categories.push({ id: newId, name: name, budget: budget, spent: 0 });
-        saveData();
-        init();
-        document.getElementById('newCatName').value = '';
-        document.getElementById('newCatBudget').value = '';
+        categories.push({ id: Date.now(), name, budget, spent: 0 });
+        saveAndRefresh();
     }
 }
 
-function deleteCategory(id) {
-    if(confirm('למחוק את הקטגוריה?')) {
-        categories = categories.filter(c => c.id !== id);
-        saveData();
-        init();
+function addExpense() {
+    const id = parseInt(document.getElementById('expenseCategory').value);
+    const amt = parseFloat(document.getElementById('expenseAmount').value);
+    if (amt) {
+        const cat = categories.find(c => c.id === id);
+        cat.spent += amt;
+        saveAndRefresh();
+        document.getElementById('expenseAmount').value = '';
     }
 }
 
-function renderCategoriesManagement() {
-    const list = document.getElementById('categoriesList');
-    list.innerHTML = '';
-    categories.forEach(cat => {
-        const div = document.createElement('div');
-        div.style.display = 'flex';
-        div.style.justifyContent = 'space-between';
-        div.style.padding = '5px 0';
-        div.style.borderBottom = '1px solid #eee';
-        div.innerHTML = `
-            <span>${cat.name} (תקציב: ${cat.budget})</span>
-            <button class="delete-btn" onclick="deleteCategory(${cat.id})">מחק</button>
-        `;
-        list.appendChild(div);
-    });
+// --- ניהול חיסכון (מטרות ואחוזים) ---
+function renderSavingsRules() {
+    const list = document.getElementById('savingsRulesList');
+    let totalP = 0;
+
+    list.innerHTML = savingsRules.map(rule => {
+        totalP += rule.percent;
+        return `
+            <div class="list-item">
+                <div style="flex:2"><strong>${rule.goal}</strong> <br> <small>${rule.fund}</small></div>
+                <div style="flex:1; display:flex; align-items:center; justify-content:center; gap:5px;">
+                    <input type="number" step="0.1" value="${rule.percent}" 
+                           style="width: 70px; padding: 5px; text-align: center; border: 1px solid #ccc; border-radius: 4px;"
+                           onchange="updateSavingsPercent(${rule.id}, this.value)"> %
+                </div>
+                <button class="delete-btn" onclick="deleteItem('savings', ${rule.id})">מחק</button>
+            </div>`;
+    }).join('');
+
+    const warn = document.getElementById('totalPercentWarn');
+    const displayTotal = Math.round(totalP * 10) / 10;
+    warn.textContent = `סה"כ אחוזים: ${displayTotal}%`;
+    warn.style.color = Math.abs(displayTotal - 100) < 0.1 ? 'var(--success)' : 'var(--danger)';
+}
+
+function updateSavingsPercent(id, newPercent) {
+    const percent = parseFloat(newPercent);
+    if (!isNaN(percent)) {
+        const rule = savingsRules.find(r => r.id === id);
+        if (rule) {
+            rule.percent = percent;
+            saveAndRefresh();
+        }
+    }
+}
+
+function addSavingsRule() {
+    const goal = document.getElementById('newGoalName').value;
+    const fund = document.getElementById('newGoalFund').value;
+    const percent = parseFloat(document.getElementById('newGoalPercent').value);
+
+    if (goal && fund && percent) {
+        savingsRules.push({ id: Date.now(), goal, fund, percent });
+        saveAndRefresh();
+        document.getElementById('newGoalName').value = '';
+        document.getElementById('newGoalFund').value = '';
+        document.getElementById('newGoalPercent').value = '';
+    }
+}
+
+function calculateSavings() {
+    const total = parseFloat(document.getElementById('totalSavingsInput').value);
+    if (!total) return;
+
+    const tbody = document.getElementById('savingsTableBody');
+    tbody.innerHTML = savingsRules.map(rule => {
+        const amount = Math.round(total * (rule.percent / 100));
+        return `<tr><td>${rule.goal}</td><td>${rule.fund}</td><td>₪${amount.toLocaleString()}</td></tr>`;
+    }).join('');
+    
+    document.getElementById('savingsResult').style.display = 'block';
+}
+
+// --- עזרים ---
+function deleteItem(type, id) {
+    if (!confirm('למחוק פריט זה?')) return;
+    if (type === 'cat') categories = categories.filter(c => c.id !== id);
+    else savingsRules = savingsRules.filter(r => r.id !== id);
+    saveAndRefresh();
+}
+
+function saveAndRefresh() {
+    localStorage.setItem('louzounCategories', JSON.stringify(categories));
+    localStorage.setItem('louzounSavings', JSON.stringify(savingsRules));
+    init();
 }
 
 function resetMonth() {
-    if (confirm('האם אתה בטוח שברצונך לאפס את כל ההוצאות לחודש חדש?')) {
+    if (confirm('לאפס את כל ההוצאות?')) {
         categories.forEach(c => c.spent = 0);
-        saveData();
-        renderBudgetList();
+        saveAndRefresh();
     }
 }
 
-// --- UTILS ---
-function switchTab(tabName) {
-    document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-    
-    document.getElementById(tabName).classList.add('active');
-    
-    if(tabName === 'budget') {
-        document.getElementById('tab-budget').classList.add('active');
-    } else {
-        document.getElementById('tab-savings').classList.add('active');
-    }
+function switchTab(tab) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(tab).classList.add('active');
+    document.getElementById('tab-' + tab).classList.add('active');
 }
 
-function saveData() {
-    localStorage.setItem('louzounCategories', JSON.stringify(categories));
-}
-
-// Start
 init();
