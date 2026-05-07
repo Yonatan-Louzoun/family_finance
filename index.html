@@ -10,7 +10,7 @@
 
 <header>
     <h1>ניהול פיננסי - משפחת לוזון</h1>
-    <div style="font-size: 0.9rem; margin-top: 5px;">מעקב הוצאות | חלוקת חיסכון חכמה</div>
+    <div style="font-size: 0.9rem; margin-top: 5px;">מעקב הוצאות | חלוקת חיסכון דינמית</div>
 </header>
 
 <div class="container">
@@ -21,7 +21,6 @@
     </div>
 
     <div id="budget" class="section active">
-        
         <div class="card">
             <h2>הוספת הוצאה חדשה</h2>
             <div class="form-group">
@@ -30,11 +29,7 @@
             </div>
             <div class="form-group">
                 <label>סכום (בש"ח)</label>
-                <input type="number" id="expenseAmount" placeholder="לדוגמה: 150">
-            </div>
-            <div class="form-group">
-                <label>תיאור (אופציונלי)</label>
-                <input type="text" id="expenseDesc" placeholder="לדוגמה: קנייה ברמי לוי">
+                <input type="number" id="expenseAmount" placeholder="סכום ההוצאה">
             </div>
             <button class="action-btn" onclick="addExpense()">הוסף הוצאה</button>
         </div>
@@ -48,40 +43,51 @@
         </div>
 
         <div class="card">
-            <h2>ניהול קטגוריות</h2>
-            <div style="display:flex; gap:10px;">
-                <input type="text" id="newCatName" placeholder="שם קטגוריה חדשה">
-                <input type="number" id="newCatBudget" placeholder="תקציב" style="width:100px;">
-                <button class="action-btn" style="width:auto;" onclick="addCategory()">+</button>
+            <h2>ניהול קטגוריות הוצאה</h2>
+            <div class="inline-form">
+                <input type="text" id="newCatName" placeholder="שם קטגוריה">
+                <input type="number" id="newCatBudget" placeholder="תקציב">
+                <button class="action-btn" onclick="addCategory()">+</button>
             </div>
-            <div id="categoriesList" style="margin-top:1rem;"></div>
+            <div id="categoriesList" class="management-list"></div>
         </div>
     </div>
 
     <div id="savings" class="section">
         <div class="card">
-            <h2>מחשבון הפקדות חודשי</h2>
-            <p>הכניסו את הסכום הפנוי לחיסכון החודש, והמערכת תחלק אותו לפי האחוזים שהוגדרו.</p>
-            
+            <h2>מחשבון הפקדות</h2>
             <div class="form-group">
-                <label>סכום כולל לחיסכון (בש"ח):</label>
-                <input type="number" id="totalSavingsInput" placeholder="לדוגמה: 4103">
+                <label>סכום כולל לחיסכון החודש:</label>
+                <input type="number" id="totalSavingsInput" placeholder="לדוגמה: 3720">
             </div>
             <button class="action-btn" onclick="calculateSavings()">בצע חלוקה</button>
+            
+            <div id="savingsResult" style="display:none; margin-top: 1.5rem;">
+                <h3>פירוט הפקדות:</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>מטרה</th>
+                            <th>קרן</th>
+                            <th>סכום</th>
+                        </tr>
+                    </thead>
+                    <tbody id="savingsTableBody"></tbody>
+                </table>
+            </div>
         </div>
 
-        <div class="card" id="savingsResult" style="display:none;">
-            <h3>תוצאות החלוקה להפקדה:</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>מטרה</th>
-                        <th>קרן / מספר</th>
-                        <th>סכום להפקדה</th>
-                    </tr>
-                </thead>
-                <tbody id="savingsTableBody"></tbody>
-            </table>
+        <div class="card">
+            <h2>ניהול מטרות ואחוזי חיסכון</h2>
+            <p style="font-size: 0.85rem; color: #666;">שימו לב: סך האחוזים חייב להסתכם ב-100%.</p>
+            <div class="inline-form">
+                <input type="text" id="newGoalName" placeholder="מטרה (לדוג' דירה)">
+                <input type="text" id="newGoalFund" placeholder="שם/מספר קרן">
+                <input type="number" id="newGoalPercent" placeholder="%" style="width: 70px;">
+                <button class="action-btn" onclick="addSavingsRule()">+</button>
+            </div>
+            <div id="savingsRulesList" class="management-list"></div>
+            <div id="totalPercentWarn" style="margin-top: 10px; font-weight: bold;"></div>
         </div>
     </div>
 
